@@ -47,20 +47,11 @@ public class SocketClient implements Runnable{
         while (true) {
             try {
                 Thread.sleep(Test_Time);
-                String Input;
-                if(Client_Input!=null) {
-                    if ((Input = Client_Input.readLine()) != null) {
-                        if (Input.equals("Close")) {
-                            Client_Output.println("Close");
-                            break;
-                        }
-                        Client_Output.println(Input);
-                        System.out.println(Input);
-                    }
-                }
                 this.SetSocket();
-                this.SendMessage(this.Socket_ID);
-                //this.Disconnect();
+                System.out.println(this.SendMessage(this.Socket_ID));
+                /* TODO 放在需要斷線的時候
+                this.Disconnect();
+                 */
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
