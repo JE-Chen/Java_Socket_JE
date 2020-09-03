@@ -1,25 +1,44 @@
 package com.je_chen.socket_server.Multi;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.*;
 
 public class MultiClient_SocketServer {
+
     private ServerSocket ServerUseSocket;
+
+    private Map<String,String> Users;
+
+    private PrintWriter DataOutPut;
+
+    public MultiClient_SocketServer(){
+        Users = new HashMap<String, String>();
+    }
 
     public void Start(int Port) throws IOException {
         ServerUseSocket = new ServerSocket(Port);
         while (true){
-            Thread Handle = new Thread(new ClientSocketHandler(ServerUseSocket.accept()));
+            Socket User= ServerUseSocket.accept();
+            /*
+            Users.put(User.getInetAddress().toString(),User.getInetAddress().toString());
+            System.out.println(Users.size());
+             */
+            SendMessage(User,"Hello");
+            Thread Handle = new Thread(new ClientSocketHandler(User));
             Handle.start();
         }
     }
 
     public void Disconnect() throws IOException {
         ServerUseSocket.close();
+        DataOutPut.close();
+    }
+
+    public void SendMessage(Socket socket,String Message) throws IOException {
+        DataOutPut = new PrintWriter(socket.getOutputStream(), true);
+        DataOutPut.println(Message);
     }
 
     private static class ClientSocketHandler implements Runnable{

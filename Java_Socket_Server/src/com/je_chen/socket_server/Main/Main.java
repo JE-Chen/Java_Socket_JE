@@ -7,8 +7,6 @@ import java.io.IOException;
 
 public class Main {
 
-
-
     public static void main(String[] args) {
         MultiClient_SocketServer SocketServer = new MultiClient_SocketServer();
         try {
