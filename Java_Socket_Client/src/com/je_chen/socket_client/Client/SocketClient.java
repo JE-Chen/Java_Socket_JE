@@ -1,14 +1,11 @@
 package com.je_chen.socket_client.Client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 public class SocketClient implements Runnable{
 
-    private Socket OneClient_Socket;
+    private Socket Client_Socket;
     private PrintWriter Client_Output;
     private BufferedReader Client_Input;
     private String Socket_ID;
@@ -23,9 +20,9 @@ public class SocketClient implements Runnable{
     }
 
     public void SetSocket() throws IOException {
-        OneClient_Socket = new Socket(this.Server_IP,this.Server_Port);
-        Client_Output = new PrintWriter(OneClient_Socket.getOutputStream(),true);
-        Client_Input = new BufferedReader(new InputStreamReader(OneClient_Socket.getInputStream()));
+        Client_Socket = new Socket(this.Server_IP,this.Server_Port);
+        Client_Output = new PrintWriter(Client_Socket.getOutputStream(),true);
+        Client_Input = new BufferedReader(new InputStreamReader(Client_Socket.getInputStream()));
     }
 
     public String SendMessage(String Message) throws IOException {
@@ -36,7 +33,7 @@ public class SocketClient implements Runnable{
     public void Disconnect() throws IOException {
         Client_Output.close();
         Client_Input.close();
-        OneClient_Socket.close();
+        Client_Socket.close();
     }
 
     public void Set_Test_Time(int Time){
@@ -50,9 +47,20 @@ public class SocketClient implements Runnable{
         while (true) {
             try {
                 Thread.sleep(Test_Time);
+                String Input;
+                if(Client_Input!=null) {
+                    if ((Input = Client_Input.readLine()) != null) {
+                        if (Input.equals("Close")) {
+                            Client_Output.println("Close");
+                            break;
+                        }
+                        Client_Output.println(Input);
+                        System.out.println(Input);
+                    }
+                }
                 this.SetSocket();
                 this.SendMessage(this.Socket_ID);
-                this.Disconnect();
+                //this.Disconnect();
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
             }
