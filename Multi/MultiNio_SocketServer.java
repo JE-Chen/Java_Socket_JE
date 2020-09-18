@@ -47,17 +47,16 @@ public class MultiNio_SocketServer implements Runnable{
                         socketChannel.register(selector,SelectionKey.OP_READ);
                     }else if(keys.isReadable()){
                         SocketChannel socketChannel = (SocketChannel) keys.channel();
-                        ByteBuffer byteBuffer = ByteBuffer.allocate(256);
+                        ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
                         socketChannel.read(byteBuffer);
                         String message = new String(byteBuffer.array()).trim();
                         System.out.println(message);
-                        keys.cancel();
-                        if(message.equals("close")){
+                        if(message.equals("end")){
                             socketChannel.close();
                         }
                     }
+                    selectionKeyIterator.remove();
                 }
-                selectionKeyIterator.remove();
             } catch (IOException e) {
                 e.printStackTrace();
             }
